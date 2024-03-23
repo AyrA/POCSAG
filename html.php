@@ -50,14 +50,35 @@ class HTML
 		return "<h$level>$content</h$level>";
 	}
 
-	public static function P(string $content): string
+	public static function P(string $content, $raw = FALSE): string
 	{
-		return '<p>' . HTML::HE($content) . '</p>';
+		return '<p>' . ($raw ? $content : HTML::HE($content)) . '</p>';
 	}
 
 	public static function Footer(): string
 	{
 		return '<p class="footer">Copyright &copy; 2024 - HB9HZK, Kevin Gut</p></body></html>';
+	}
+
+	public static function TimeZoneField(): string
+	{
+		$zones = [];
+		foreach (timezone_identifiers_list() as $tz) {
+			$parts = explode('/', $tz, 2);
+			if (count($parts) < 2) {
+				continue;
+			}
+			$zones[$parts[0]][] = $parts[1];
+		}
+		$ret = '<select name="timezone"><option value="">No (Use server default: ' . HTML::HE(date_default_timezone_get()) . ')</option>';
+		foreach ($zones as $zone => $values) {
+			$ret .= '<optgroup label="' . HTML::HE($zone) . '">';
+			foreach ($values as $entry) {
+				$ret .= '<option value="' . HTML::HE($zone) . '/' . HTML::HE($entry) . '">' . HTML::HE($entry) . '</option>';
+			}
+			$ret .= '</optgroup>';
+		}
+		return "$ret</select>";
 	}
 
 	public static function LoginForm(): string
@@ -141,6 +162,7 @@ class HTML
 	public static function TimeForm(): string
 	{
 		return '<form method="post">' . CSRF::GetFormElement() . HTML::ModeField('sendtime') .
+			'Override Time Zone: ' . HTML::TimeZoneField() . '<br />' .
 			'<input type="submit" value="Send Current Time" /></form>';
 	}
 

@@ -103,6 +103,7 @@ try {
 }
 
 echo HTML::Head();
+
 if (Session::IsSignedIn()) {
 	echo HTML::LogoutForm();
 	echo '<hr />';
@@ -113,7 +114,11 @@ if (Session::IsSignedIn()) {
 	echo HTML::PocsagForm();
 
 	echo HTML::H(2, 'Program time');
-	echo HTML::P('Sends the current date and time to all supported pagers in range. The server time must be correct and the time zone set to your local time for this to work. Current date and time: ' . date('Y-m-d H:i') . '; Timezone: ' . date_default_timezone_get());
+	echo HTML::P('Sends the current date and time to all supported pagers in range.
+		The server time must be correct and the time zone set to your local time for this to work,
+		because pagers use local time instead of UTC.
+		If your timezone is wrong, you can either fix it in php.ini, or override it using the control below.<br />
+		Current server date and time: <code>' . HTML::HE(date('Y-m-d H:i')) . '</code><br />Timezone: <code>' . HTML::HE(date_default_timezone_get()) . '</code>', TRUE);
 	echo HTML::TimeForm();
 
 	echo HTML::H(2, 'Address book');
