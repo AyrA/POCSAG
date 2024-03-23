@@ -19,3 +19,9 @@ input[type=number] {
 	font-weight: bold;
 	color: #F00;
 }
+
+.footer {
+	font-style: italic;
+	text-align: right;
+	color: #888;
+}

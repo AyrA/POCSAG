@@ -57,7 +57,7 @@ class HTML
 
 	public static function Footer(): string
 	{
-		return '</body></html>';
+		return '<p class="footer">Copyright &copy; 2024 - HB9HZK, Kevin Gut</p></body></html>';
 	}
 
 	public static function LoginForm(): string
