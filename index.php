@@ -113,7 +113,7 @@ if (Session::IsSignedIn()) {
 	echo HTML::PocsagForm();
 
 	echo HTML::H(2, 'Program time');
-	echo HTML::P('Sends the current date and time to all supported pagers in range. The server time must be correct for this to work. Current date and time: ' . date('Y-m-d H:i') . '; Timezone: ' . date_default_timezone_get());
+	echo HTML::P('Sends the current date and time to all supported pagers in range. The server time must be correct and the time zone set to your local time for this to work. Current date and time: ' . date('Y-m-d H:i') . '; Timezone: ' . date_default_timezone_get());
 	echo HTML::TimeForm();
 
 	echo HTML::H(2, 'Address book');
