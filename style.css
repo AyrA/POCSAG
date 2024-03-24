@@ -25,3 +25,9 @@ input[type=number] {
 	text-align: right;
 	color: #888;
 }
+
+summary {
+	font-size: large;
+	font-weight: bold;
+	cursor: pointer;
+}

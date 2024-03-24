@@ -4,6 +4,7 @@ require_once('csrf.php');
 
 class HTML
 {
+	private static bool $inSection = FALSE;
 
 	private static function FormElement(string $name, string $type, string|null $mode, string|null $value = NULL, array $attr = [])
 	{
@@ -20,9 +21,44 @@ class HTML
 		return '<input ' . implode(' ', $attrs) . ' />';
 	}
 
-	private static function ModeField($mode): string
+	private static function ModeField(string $mode): string
 	{
 		return HTML::FormElement('mode', 'hidden', NULL, $mode);
+	}
+
+	public static function Section(string $title, bool|string|array $open = FALSE): string
+	{
+		if (is_string($open)) {
+			$open = [$open];
+		}
+		if (is_array($open)) {
+			$isOpen = FALSE;
+			$mode = Session::GetMode();
+			foreach ($open as $str) {
+				$isOpen = $isOpen || $str === $mode;
+			}
+			echo "<!-- $mode -->";
+			echo "<!-- " . implode(' ', $open) . " -->";
+			$open = $isOpen;
+		}
+		if (!is_bool($open)) {
+			throw new InvalidArgumentException('$open argument must be string, array of strings, or a boolean');
+		}
+		$ret = HTML::EndSection();
+		$ret .= '<details' . ($open ? ' open' : '') . '>';
+		$ret .= '<summary>' . HTML::HE($title) . '</summary>';
+
+		HTML::$inSection = TRUE;
+		return $ret;
+	}
+
+	public static function EndSection(): string
+	{
+		if (HTML::$inSection) {
+			HTML::$inSection = FALSE;
+			return '</details>';
+		}
+		return '';
 	}
 
 	public static function Head(): string
@@ -57,7 +93,7 @@ class HTML
 
 	public static function Footer(): string
 	{
-		return '<p class="footer">Copyright &copy; 2024 - HB9HZK, Kevin Gut</p></body></html>';
+		return HTML::EndSection() . '<p class="footer">Copyright &copy; 2024 - HB9HZK, Kevin Gut</p></body></html>';
 	}
 
 	public static function TimeZoneField(): string

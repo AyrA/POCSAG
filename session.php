@@ -66,4 +66,19 @@ class Session
 		}
 		return FALSE;
 	}
+
+	public static function GetMode(): ?string
+	{
+		return $_SESSION['html_mode'] ?? NULL;
+	}
+
+	public static function SetMode(?string $mode)
+	{
+		Session::Ensure();
+		if ($mode === NULL) {
+			unset($_SESSION['html_mode']);
+		} else {
+			$_SESSION['html_mode'] = $mode;
+		}
+	}
 }

@@ -37,7 +37,9 @@ try {
 }
 
 Session::Start();
-
+if (HTML::GetPostMode() !== NULL) {
+	Session::SetMode(HTML::GetPostMode());
+}
 //Handle form events
 $error = NULL;
 try {
@@ -114,11 +116,11 @@ if (Session::IsSignedIn()) {
 	echo '<hr />';
 	echo HTML::Error($error ?? '');
 
-	echo HTML::H(1, 'Send Message');
+	echo HTML::Section('Send Message', TRUE);
 	echo HTML::P('Sends a message to the given RIC');
 	echo HTML::PocsagForm();
 
-	echo HTML::H(2, 'Program time');
+	echo HTML::Section('Program time', ['sendtime']);
 	echo HTML::P('Sends the current date and time to all supported pagers in range.
 		The server time must be correct and the time zone set to your local time for this to work,
 		because pagers use local time instead of UTC.
@@ -126,24 +128,35 @@ if (Session::IsSignedIn()) {
 		Current server date and time: <code>' . HTML::HE(date('Y-m-d H:i')) . '</code><br />Timezone: <code>' . HTML::HE(date_default_timezone_get()) . '</code>', TRUE);
 	echo HTML::TimeForm();
 
-	echo HTML::H(2, 'Address book');
-	echo HTML::P('Manage addressbook entries. Typing the name into the RIC field of the message sender will show the suggested RIC value (you must select it to apply it)');
+	echo HTML::Section('Address book', ['addr']);
+	echo HTML::P('Manage addressbook entries. Typing the name into the RIC field of the message sender will show the suggested RIC value (you must select it to apply it).
+		Double clicking shows all suggestions.');
 	echo HTML::AddrForm();
 
-	echo HTML::H(1, 'Pi-Star');
+	echo HTML::Section('Pi-Star', ['pistar']);
 	echo HTML::P('Configure the Pi-Star parameters here. Don\'t forget to enable the remote command feature on Pi-Star or it will not work.');
 	echo HTML::P('Hostkey, username, and password are validated when saving. Make sure pi-star is running and connected to your network.');
 	echo HTML::PistarForm();
 
-	echo HTML::H(1, 'API');
+	echo HTML::Section('API', ['addapi', 'delapi']);
 	echo HTML::P('Create and delete API keys.');
-	echo '<p>API keys can be used to send messages via GET API. Example URL: <code>' . HTML::HE(getUrl()) .
-		'?mode=send&key={apikey}?ric={ric}&message={message}</code><br />' .
-		'The API response is a JSON object with a boolean "success" property and a string "error" property (if success is false only)</p>';
 	echo HTML::AddApiForm();
 	echo HTML::EditApiForm();
 
-	echo HTML::H(1, 'Account');
+	echo HTML::Section('API Help', ['addapi', 'delapi']);
+	echo HTML::P('To use the API, send a GET request with the URL parameters "mode" and "key" to this page.
+		"key" is the API key.
+		"mode" can either be "send" or "time".');
+	echo HTML::P('The API response is a JSON object with a boolean "success" property and a string "error" property (if success is false only)');
+
+	echo HTML::H(2, 'mode=send');
+	echo HTML::P('Sends a message. Add parameters "ric" and "message" to specify recipient and message.
+		The ric must be specified as a number, and you cannot use names from the address book.');
+
+	echo HTML::H(2, 'mode=time');
+	echo HTML::P('Sends the current time to all pagers in range. No additional parameters are required.');
+
+	echo HTML::Section('Account', ['changepass', 'reinit']);
 	echo HTML::P('Manage your account details');
 
 	echo HTML::H(2, 'Change password');
@@ -154,6 +167,7 @@ if (Session::IsSignedIn()) {
 		'API tokens and address book entries');
 	echo HTML::ReinitForm();
 
+	echo HTML::EndSection();
 	echo '<hr />';
 	echo HTML::LogoutForm();
 } elseif (Config::Has()) {
@@ -167,3 +181,4 @@ if (Session::IsSignedIn()) {
 	echo HTML::InitForm();
 }
 echo HTML::Footer();
+Session::SetMode(NULL);
