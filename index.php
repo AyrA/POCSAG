@@ -77,6 +77,11 @@ try {
 				reload();
 			};
 			break;
+		case 'sendtime':
+			if (Actions::TimeForm()) {
+				reload();
+			};
+			break;
 		case 'addr':
 			if (Actions::AddrForm()) {
 				reload();

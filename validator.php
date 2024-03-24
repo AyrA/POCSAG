@@ -127,7 +127,7 @@ class Validator
 			throw new InvalidArgumentException('Message must be a string');
 		}
 		//Remove trailing spaces as they're useless.
-		$message=rtrim($message);
+		$message = rtrim($message);
 		if (empty($message)) {
 			throw new InvalidArgumentException('Message cannot be empty');
 		}
@@ -138,5 +138,13 @@ class Validator
 			throw new InvalidArgumentException('Message cannot be longer than ' . Validator::MaxMessageLength . ' characters');
 		}
 		return $message;
+	}
+
+	public static function TimeZone($tz): string
+	{
+		if (!in_array($tz, timezone_identifiers_list(), TRUE)) {
+			throw new InvalidArgumentException('Invalid time zone specifier');
+		}
+		return $tz;
 	}
 }

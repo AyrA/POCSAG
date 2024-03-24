@@ -86,6 +86,27 @@ class Actions
 		return TRUE;
 	}
 
+	public static function TimeForm(): bool
+	{
+		Session::EnsureSignedIn();
+
+		$tz = $_POST['timezone'] ?? '';
+
+		if (!empty($tz)) {
+			$tz = Validator::TimeZone($tz);
+		}
+		$conf = Config::Get();
+		$pocsag = $conf->pistar->GetPocsagInstance();
+		$old = date_default_timezone_get();
+		date_default_timezone_set($tz);
+		try {
+			$pocsag->SendTimeSignal();
+		} finally {
+			date_default_timezone_set($old);
+		}
+		return TRUE;
+	}
+
 	public static function PocsagForm(): bool
 	{
 		Session::EnsureSignedIn();
